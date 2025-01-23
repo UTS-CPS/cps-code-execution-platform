@@ -6,13 +6,14 @@ import Editor, {
   useMonaco,
   loader
 } from '@monaco-editor/react'
-import { Box } from '@chakra-ui/react'
+import { HStack, Box } from '@chakra-ui/react'
 import LanguageSelector from './LanguageSelector'
+import Output from './Output.tsx'
 import { CODE_SNIPPETS } from '../constants'
 const CodeEditor = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
   const [value, setValue] = useState<string | undefined>('')
-  const [language, setLanguage] = useState<string | undefined>('typescript')
+  const [language, setLanguage] = useState<string>('typescript')
 
   const handleEditorChange = (newVal: string | undefined) => {
     setValue(newVal)
@@ -30,16 +31,21 @@ const CodeEditor = () => {
 
   return (
     <Box>
-      <LanguageSelector language={language} onSelect={onSelect} />
-      <Editor
-        height="75vh"
-        theme="vs-dark"
-        language={language}
-        defaultValue={value}
-        onMount={onMount}
-        value={value}
-        onChange={handleEditorChange}
-      />
+      <HStack gap={4}>
+        <Box w="50%">
+          <LanguageSelector language={language} onSelect={onSelect} />
+          <Editor
+            height="75vh"
+            theme="vs-dark"
+            language={language}
+            defaultValue={CODE_SNIPPETS[language]}
+            onMount={onMount}
+            value={value}
+            onChange={handleEditorChange}
+          />
+        </Box>
+        <Output />
+      </HStack>
     </Box>
   )
 }
