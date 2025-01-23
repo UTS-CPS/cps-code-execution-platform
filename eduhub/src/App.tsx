@@ -1,5 +1,6 @@
 import { Box } from '@chakra-ui/react'
 import Editor from './components/CodeEditor.tsx'
+import LanguageSelector from './components/LanguageSelector.tsx'
 
 function App() {
   return (
