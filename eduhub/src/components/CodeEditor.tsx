@@ -9,7 +9,8 @@ import Editor, {
 import { HStack, Box } from '@chakra-ui/react'
 import LanguageSelector from './LanguageSelector'
 import Output from './Output.tsx'
-import { CODE_SNIPPETS } from '../constants'
+import { LANGUAGES, CODE_SNIPPETS } from '../constants'
+
 const CodeEditor = () => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
   const [value, setValue] = useState<string | undefined>('')
@@ -44,7 +45,7 @@ const CodeEditor = () => {
             onChange={handleEditorChange}
           />
         </Box>
-        <Output />
+        <Output editorRef={editorRef} language={language} />
       </HStack>
     </Box>
   )

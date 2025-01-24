@@ -6,8 +6,8 @@ import {
   MenuTrigger
 } from '@chakra-ui/react/menu'
 import { Box, Text } from '@chakra-ui/react'
-import { CODE_SNIPPETS, LANGUAGE_VERSIONS } from '../constants'
-const languages = Object.entries(LANGUAGE_VERSIONS)
+import { CODE_SNIPPETS, LANGUAGES } from '../constants'
+const languages = Object.entries(LANGUAGES)
 
 const LanguageSelector = ({ language, onSelect }) => {
   return (
@@ -28,7 +28,7 @@ const LanguageSelector = ({ language, onSelect }) => {
                 onClick={() => onSelect(language)}
               >
                 <Text as="span" color="gray.500" fontSize="sm">
-                  {language} - {version}
+                  {language}
                 </Text>
               </MenuItem>
             ))}
