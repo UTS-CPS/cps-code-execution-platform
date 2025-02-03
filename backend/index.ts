@@ -1,12 +1,36 @@
-const axios = require('axios').default
 const express = require('express')
+const axios = require('axios')
+const dotenv = require('dotenv')
+const { createServer } = require('http')
+const { Server } = require('socket.io')
+const cors = require('cors')
+
 const app = express()
-require('dotenv').config()
+
+// Add CORS middleware for HTTP endpoints
+app.use(cors({
+  origin: "http://localhost:5173",
+  methods: ['GET', 'POST', 'PUT'],
+  credentials: true
+}))
+
+app.use(express.json())
+
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173", // Replace with your frontend URL
+    methods: ["GET", "POST"]
+  }
+})
+dotenv.config()
 const url = process.env.JUDGE0_BASE_URL
 const callback = process.env.CALLBACK_URL
 const PORT = 8080
 
-app.listen(PORT, () => console.log(`it's alive on http://localhost:${PORT}`))
+app.use(express.json())
+
+httpServer.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))
 
 // i send my request from the front end, and it is received here with
 // the details (language, src code etc) which is then sent to judge0
@@ -36,7 +60,21 @@ app.post('/submissions/', async (req, res) => {
     res.status(500).json({ error: 'Failed to submit code.' })
   }
 })
-app.put('/result/', (req, res) => {})
+
+// Set up socket connection
+io.on('connection', (socket) => {
+  console.log('Client connected')
+  
+  socket.on('disconnect', () => {
+    console.log('Client disconnected')
+  })
+})
+
+app.put('/result/', (req, res) => {
+  const submissionResult = req.body
+  io.emit('submissionResult', submissionResult)
+  res.status(200).send()
+})
 
 function getLangs() {
   axios({

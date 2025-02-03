@@ -1,33 +1,47 @@
 import { Box, Button, Text } from '@chakra-ui/react'
 import { FaPlay } from 'react-icons/fa'
 import { LANGUAGES } from '../constants'
-import { subCode, codeResult } from '../services/judge.tsx'
+import { subCode } from '../services/judge.tsx'
 import { useEffect, useState } from 'react'
 import { SubmissionResponse } from '../services/judge.tsx'
+import { io } from 'socket.io-client'
 
 const Output = ({ editorRef, language }) => {
-  const [tken, setToken] = useState('')
   const [output, setOutput] = useState<SubmissionResponse | null>(null)
 
-  // this should send a POST request to the back end
-  const handleRun = () => {
-    const response = subCode(
-      btoa(editorRef.current.getValue()),
-      LANGUAGES[language]
-    )
-    /* response.then(data => {
-      console.log(data)
-      runOutput(data.token)
-      setToken(data.token)
-    }) */
-  }
-
-  const runOutput = token => {
-    const response = codeResult(token)
-    response.then(data => {
-      console.log(data)
-      setOutput(data)
+  useEffect(() => {
+    // Connect to WebSocket server
+    const socket = io('http://localhost:8080', {
+      transports: ['websocket'],
+      reconnection: true
     })
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server')
+    })
+
+    socket.on('submissionResult', (result) => {
+      console.log('Received result:', result)
+      setOutput(result)
+    })
+
+    // Cleanup on unmount
+    return () => {
+      socket.disconnect()
+    }
+  }, [])
+
+  const handleRun = async () => {
+    try {
+      const response = await subCode(
+        btoa(editorRef.current.getValue()),
+        LANGUAGES[language]
+      )
+      console.log('Submission sent:', response)
+      // The backend will handle sending the result via WebSocket
+    } catch (error) {
+      console.error('Error submitting code:', error)
+    }
   }
 
   return (
@@ -60,4 +74,5 @@ const Output = ({ editorRef, language }) => {
     </Box>
   )
 }
+
 export default Output
