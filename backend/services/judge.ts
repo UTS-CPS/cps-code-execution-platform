@@ -1,5 +1,5 @@
 import axios from 'axios'
-const url = import.meta.env.VITE_JUDGE0_URL
+const url = process.env.JUDGE0_URL
 
 export interface SubmissionResponse {
   stdout: string
@@ -11,7 +11,6 @@ export interface SubmissionResponse {
 // returns a token for the GET request
 export const subCode = async (code, id) => {
   const response = await axios.post(
-    // instead post this to the back end
     `${url}/submissions/?base64_encoded=false&wait=false`,
     {
       source_code: code,

@@ -9,13 +9,17 @@ const Output = ({ editorRef, language }) => {
   const [tken, setToken] = useState('')
   const [output, setOutput] = useState<SubmissionResponse | null>(null)
 
+  // this should send a POST request to the back end
   const handleRun = () => {
-    const response = subCode(editorRef.current.getValue(), LANGUAGES[language])
-    response.then(data => {
+    const response = subCode(
+      btoa(editorRef.current.getValue()),
+      LANGUAGES[language]
+    )
+    /* response.then(data => {
       console.log(data)
       runOutput(data.token)
       setToken(data.token)
-    })
+    }) */
   }
 
   const runOutput = token => {
