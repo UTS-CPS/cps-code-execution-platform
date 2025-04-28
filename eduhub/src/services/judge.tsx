@@ -24,5 +24,3 @@ export const subCode = async (code, id) => {
   )
   return response.data
 }
-
-// You can remove or comment out the codeResult function since we'll be getting results via WebSocket

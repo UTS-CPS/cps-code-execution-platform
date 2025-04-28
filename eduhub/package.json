@@ -11,9 +11,15 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.4.0",
+    "@codemirror/lang-cpp": "^6.0.2",
+    "@codemirror/lang-go": "^6.0.1",
+    "@codemirror/lang-javascript": "^6.2.3",
+    "@codemirror/lang-python": "^6.2.0",
+    "@codemirror/theme-one-dark": "^6.1.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@monaco-editor/react": "^4.6.0",
+    "@uiw/react-codemirror": "^4.23.11",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "frame": "^1.0.0-alpha.2",
@@ -26,6 +32,9 @@
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
+    "@codemirror/commands": "^6.8.1",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.36.6",
     "@eslint/js": "^9.17.0",
     "@types/node": "^22.10.9",
     "@types/react": "^18.3.18",

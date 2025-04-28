@@ -1,33 +1,40 @@
 import { useRef, useState } from 'react'
-import * as monaco from 'monaco-editor'
-import Editor, {
-  OnMount,
-  DiffEditor,
-  useMonaco,
-  loader
-} from '@monaco-editor/react'
+import CodeMirror from '@uiw/react-codemirror'
+import { javascript } from '@codemirror/lang-javascript'
+import { python } from '@codemirror/lang-python'
+import { cpp } from '@codemirror/lang-cpp'
+import { go } from '@codemirror/lang-go'
+import { oneDark } from '@codemirror/theme-one-dark'
 import { HStack, Box } from '@chakra-ui/react'
 import LanguageSelector from './LanguageSelector'
-import Output from './Output.tsx'
-import { LANGUAGES, CODE_SNIPPETS } from '../constants'
+import Output from './Output'
+import { CODE_SNIPPETS, LANGUAGES } from '../constants'
+
+const LANGUAGE_EXTENSIONS: Record<string, any> = {
+  javascript: javascript(),
+  typescript: javascript({ typescript: true }),
+  python: python(),
+  cpp: cpp(),
+  c: cpp(),
+  go: go()
+}
 
 const CodeEditor = () => {
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null)
-  const [value, setValue] = useState<string | undefined>('')
-  const [language, setLanguage] = useState<string>('typescript')
+  const editorRef = useRef<{ getValue: () => string } | null>(null)
+  const [value, setValue] = useState('')
+  const [language, setLanguage] =
+    useState<keyof typeof CODE_SNIPPETS>('typescript')
 
-  const handleEditorChange = (newVal: string | undefined) => {
-    setValue(newVal)
+  const onSelect = (lang: keyof typeof CODE_SNIPPETS) => {
+    setLanguage(lang)
+    setValue(CODE_SNIPPETS[lang])
   }
 
-  const onMount: OnMount = (editor, monaco) => {
-    editorRef.current = editor
-    editor.focus()
-  }
-
-  const onSelect = (language: keyof typeof CODE_SNIPPETS) => {
-    setLanguage(language)
-    setValue(CODE_SNIPPETS[language])
+  const handleCreateEditor = (view: any) => {
+    editorRef.current = {
+      getValue: () => view.state.doc.toString()
+    }
+    view.focus()
   }
 
   return (
@@ -35,14 +42,13 @@ const CodeEditor = () => {
       <HStack gap={4}>
         <Box w="50%">
           <LanguageSelector language={language} onSelect={onSelect} />
-          <Editor
-            height="75vh"
-            theme="vs-dark"
-            language={language}
-            defaultValue={CODE_SNIPPETS[language]}
-            onMount={onMount}
+          <CodeMirror
             value={value}
-            onChange={handleEditorChange}
+            height="75vh"
+            theme={oneDark}
+            extensions={[LANGUAGE_EXTENSIONS[language]]}
+            onChange={val => setValue(val)}
+            onCreateEditor={handleCreateEditor}
           />
         </Box>
         <Output editorRef={editorRef} language={language} />
@@ -50,4 +56,5 @@ const CodeEditor = () => {
     </Box>
   )
 }
+
 export default CodeEditor
